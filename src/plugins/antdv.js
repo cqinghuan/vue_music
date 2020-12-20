@@ -8,7 +8,8 @@ Row,
 Col,
 Avatar,
 Icon,
-Layout
+Layout,
+Carousel
 } from 'ant-design-vue'
 
 Vue.use(FormModel)
@@ -20,3 +21,4 @@ Vue.use(Col)
 Vue.use(Avatar)
 Vue.use(Icon)
 Vue.use(Layout)
+Vue.use(Carousel)

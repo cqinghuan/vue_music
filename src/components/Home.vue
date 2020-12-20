@@ -1,10 +1,10 @@
 <template>
   <a-layout>
-    <a-layout-content>
+    <a-layout-content :style="bgStyle">
         <router-view></router-view>
     </a-layout-content>
-    <a-layout-footer>
-      <a-row ref="rowRef">
+    <a-layout-footer ref="footerRef">
+      <a-row>
         <a-col :span="6" @click="activePath = 'hall'" :class="activePath == 'hall' ? 'activePath' : ''">
           <a-icon type="home"></a-icon>
           <p>Home</p>
@@ -33,21 +33,30 @@ export default {
       bodyStyle: {
         padding: 0,
       },
-      activePath: 'hall'
+      activePath: 'hall',
+      bgStyle: {
+        'padding-bottom': '',
+        'background-color': '#00182E'
+      }
     };
   },
   created() {
     // this.getAccountInfo()
+    
+    
+  },
+  mounted() {
+    this.bgStyle['padding-bottom'] = this.$refs.footerRef.$el.scrollHeight + 'px'
   },
   methods: {
     async getAccountInfo() {
       const { data: res } = await this.$http.get("/user/account");
       console.log(res);
-    },
+    }
   },
   watch: {
       activePath(value) {
-          this.$router.push(`/${value}`)
+        this.$router.push(`/${value}`)
       }
   }
 };

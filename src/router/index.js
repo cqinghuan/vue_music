@@ -6,6 +6,7 @@ import Hall from '../components/Hall/Hall.vue'
 import Search from '../components/Search/Search.vue'
 import List from '../components/List/List.vue'
 import Account from '../components/Account/Account.vue'
+import ResourceDetail from '../components/Hall/ResourceDetail.vue'
 
 Vue.use(VueRouter)
 
@@ -16,7 +17,8 @@ const routes = [
     { path: '/hall', component: Hall },
     { path: '/search', component: Search },
     { path: '/list', component: List },
-    { path: '/account', component: Account }
+    { path: '/account', component: Account },
+    { path: '/resourcedetail', name: 'resourcedetail', component: ResourceDetail }
   ]}
 ]
 
