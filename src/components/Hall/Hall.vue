@@ -1,5 +1,5 @@
 <template>
-  <div class="bg">
+  <div>
     <a-carousel autoplay>
       <div v-for="item in bannerList" :key="item.bannerId">
         <img :src="item.pic" alt="">
@@ -75,6 +75,7 @@ export default {
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical; 
     color: #FFF;
+    height: 42px;
   }
 }
 </style>

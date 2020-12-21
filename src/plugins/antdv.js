@@ -9,7 +9,10 @@ Col,
 Avatar,
 Icon,
 Layout,
-Carousel
+Carousel,
+PageHeader,
+Descriptions,
+List
 } from 'ant-design-vue'
 
 Vue.use(FormModel)
@@ -22,3 +25,6 @@ Vue.use(Avatar)
 Vue.use(Icon)
 Vue.use(Layout)
 Vue.use(Carousel)
+Vue.use(PageHeader)
+Vue.use(Descriptions)
+Vue.use(List)

@@ -1,5 +1,5 @@
 <template>
-  <div class="login-container">
+  <div class="login-container phone-box">
     <a-form-model :model="loginForm" class="login-form" :rules="loginRules" ref="loginRef">
       <a-form-model-item prop="username">
         <a-input placeholder="Username" v-model="loginForm.username"></a-input>

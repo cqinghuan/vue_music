@@ -1,7 +1,8 @@
 <template>
-  <a-layout>
-    <a-layout-content :style="bgStyle">
+  <a-layout class="phone-box">
+    <a-layout-content>
         <router-view></router-view>
+        <div :style="bgStyle"></div>
     </a-layout-content>
     <a-layout-footer ref="footerRef">
       <a-row>
@@ -36,7 +37,6 @@ export default {
       activePath: 'hall',
       bgStyle: {
         'padding-bottom': '',
-        'background-color': '#00182E'
       }
     };
   },
@@ -47,6 +47,8 @@ export default {
   },
   mounted() {
     this.bgStyle['padding-bottom'] = this.$refs.footerRef.$el.scrollHeight + 'px'
+    console.log(this.$refs.footerRef.$el.scrollHeight);
+    
   },
   methods: {
     async getAccountInfo() {
@@ -64,11 +66,12 @@ export default {
 
 <style lang="less" scoped>
 .ant-layout-footer {
-  width: 100%;
+  width: 584px;
   position: fixed;
-  bottom: 0;
+  bottom: 5px;
   padding: 0;
   background-color: #002337;
+  z-index: 999;
 
   .ant-col {
     color: #ffffff;
