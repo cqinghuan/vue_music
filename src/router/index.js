@@ -34,10 +34,6 @@ const router = new VueRouter({
 router.beforeEach((to, from, next) => {
   if (to.path === '/login') return next();
   const tokenStr = window.sessionStorage.getItem('token');
-  if (Object.keys(to.params).length === 0) {
-    Object.assign(to.params, store.state.paramMap[to.name] || {})
-  }
-  store.commit('refreshParam', {key: to.name, value: to.params})
   if (!tokenStr) return next('/login');
   next();
 })

@@ -7,8 +7,8 @@
     </a-carousel>
     <a-card title="Recommended For You" :headStyle="cardStyle" :bodyStyle="cardStyle" :style="cardStyle" class="recommend">
       <a-card-grid style="width:33.3%;text-align:center" v-for="item in recourceList" :key="item.id">
-        <a-card :bordered="false" :style="cardStyle" @click="gotoResourceDetail(item.id)">
-          <img slot="cover" :src="item.picUrl"/>
+        <a-card :bordered="false" :style="cardStyle" @click="gotoResourceDetail(item.id)" ref="card">
+          <img slot="cover" :src="item.picUrl" :style="imgStyle"/>
           <p>{{ item.name }}</p>
         </a-card>
       </a-card-grid>
@@ -26,7 +26,10 @@ export default {
         'background-color': '#00182E',
         'border': 'none'
       },
-      recourceList: []
+      recourceList: [],
+      imgStyle: {
+        'height': '100%'
+      }
     }
   },
   created() {
@@ -46,8 +49,7 @@ export default {
       this.recourceList = res.recommend.slice(0, 6)
     },
     gotoResourceDetail(id) {
-      console.log(id);
-      
+      this.$store.commit('setSongListId', id)
       this.$router.push({
         name: 'resourcedetail',
         params: {
