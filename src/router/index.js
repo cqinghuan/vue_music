@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
+import store from '../store'
 import Login from '../components/Login.vue'
 import Home from '../components/Home.vue'
 import Hall from '../components/Hall/Hall.vue'
@@ -14,12 +15,14 @@ Vue.use(VueRouter)
 const routes = [
   { path: '/', redirect: '/login' },
   { path: '/login', component: Login },
-  { path: '/home', component: Home, redirect: '/hall', children: [
-    { path: '/hall', component: Hall },
-    { path: '/search', component: Search },
-    { path: '/list', component: List },
-    { path: '/account', component: Account }
-  ]},
+  {
+    path: '/home', component: Home, redirect: '/hall', children: [
+      { path: '/hall', component: Hall },
+      { path: '/search', component: Search },
+      { path: '/list', component: List },
+      { path: '/account', component: Account }
+    ]
+  },
   { path: '/resourcedetail', name: 'resourcedetail', component: ResourceDetail },
   { path: '/play', name: 'play', component: Play }
 ]
@@ -29,10 +32,14 @@ const router = new VueRouter({
 })
 // 路由导航守卫
 router.beforeEach((to, from, next) => {
-	if (to.path === '/login') return next();
-	const tokenStr = window.sessionStorage.getItem('token');
-	if (!tokenStr) return next('/login');
-	next();
+  if (to.path === '/login') return next();
+  const tokenStr = window.sessionStorage.getItem('token');
+  if (Object.keys(to.params).length === 0) {
+    Object.assign(to.params, store.state.paramMap[to.name] || {})
+  }
+  store.commit('refreshParam', {key: to.name, value: to.params})
+  if (!tokenStr) return next('/login');
+  next();
 })
 
 export default router

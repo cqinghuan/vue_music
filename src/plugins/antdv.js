@@ -12,7 +12,9 @@ Layout,
 Carousel,
 PageHeader,
 Descriptions,
-List
+List,
+Progress,
+Slider
 } from 'ant-design-vue'
 
 Vue.use(FormModel)
@@ -28,3 +30,5 @@ Vue.use(Carousel)
 Vue.use(PageHeader)
 Vue.use(Descriptions)
 Vue.use(List)
+Vue.use(Progress)
+Vue.use(Slider)
