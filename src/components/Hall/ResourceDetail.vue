@@ -1,12 +1,17 @@
 <template>
-  <div class="phone-box">
+  <div class="phone-box" ref="phone" @scroll="scrollEvent">
     <!-- 顶部歌单信息区域 -->
     <div class="head_channel">
+      <p class="title" ref="title" :style="titleStyle"><a-icon type="arrow-left" @click="() => $router.go(-1)" style="padding-right: 15px"/>歌单</p>
       <a-page-header
-        title="歌单"
         :style="{'z-index': 1}"
-        @back="() => $router.go(-1)"
       >
+        <template slot="title">
+          <a-affix :target="() => this.$refs.phone">
+            <p></p>
+            <!-- <p class="title"><a-icon type="arrow-left" @click="() => $router.go(-1)" style="padding-right: 15px"/>歌 单</p> -->
+          </a-affix>
+        </template>
         <a-row :gutter="20">
           <a-col :span="10">
             <img :src="resourceDetail.coverImgUrl" alt="">
@@ -34,7 +39,7 @@
       <div class="blur_bg_gray"></div>
     </div>
     <!-- 歌曲清单区域 -->
-    <div class="songsbox">
+    <div class="songsbox" ref="body">
       <a-list :data-source="songsInfo" size="large">
         <a-list-item slot="renderItem" slot-scope="item, index" :key="item.id" @click="gotoSongPlay(item.id)">
           <a-list-item-meta>
@@ -75,7 +80,11 @@ export default {
       cardStyle: {
         'background': 'none'
       },
-      songsInfo: []
+      songsInfo: [],
+      titleStyle: {
+        'width': '',
+        'background-color': 'rgba(0, 0, 0, 0)'
+      }
     };
   },
   created() {
@@ -99,6 +108,9 @@ export default {
       this.resourceDetail.avatarUrl = res.playlist.creator.avatarUrl
       this.resourceDetail.coverImgUrl = res.playlist.coverImgUrl
       this.resourceDetail.name = res.playlist.name
+      this.titleStyle.width = this.$refs.phone.clientWidth + 'px'
+      console.log(this.$refs.phone.scrollTop);
+
     },
     // 设置播放列表的id
     setPlayList() {
@@ -119,6 +131,16 @@ export default {
           id
         }
       })
+    },
+    scrollEvent(e) {
+      let top = e.target.scrollTop
+      let height = this.$refs.body.offsetTop
+      if (top <= height) {
+        this.titleStyle['background-color'] = `rgba(0, 0, 0, ${0.6 * top / height})`
+      } else {
+        this.titleStyle['background-color'] = 'rgba(0, 0, 0, 0.6)'
+      }
+      
     }
   },
   watch: {
@@ -137,6 +159,20 @@ export default {
   height: 300px;
   position: relative;
   overflow: hidden;
+
+  .title {
+    width: 584px;
+    position: fixed;
+    top: 0;
+    padding: 10px 20px;
+    font-weight: 600;
+    font-size: 20px;
+    z-index: 999;
+    color: #FFF;
+    margin: 0;
+    // font-weight: normal;
+    background: rgb(0,0,0);
+  }
 }
 
 .head_channel .blur_bg {

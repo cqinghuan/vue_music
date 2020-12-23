@@ -8,11 +8,11 @@
       <audio
         :src="songInfo.src"
         ref="audioRef"
-        autoplay
         @timeupdate="autoChanged"
         @canplay="initAudio"
         @play="() => { this.isPlay = true }"
         @pause ="() => { this.isPlay = false }"
+        @ended="songEnd"
       ></audio>
       <div class="control">
         <a-slider
@@ -22,9 +22,10 @@
           :tip-formatter="formatter"
         />
         <a-row>
-          <a-col :span="8"><a-icon type="step-backward" /></a-col>
+          <a-col :span="8"><a-icon type="step-backward" @click="changeSong('back')"/></a-col>
           <a-col :span="8"><a-icon :type="!isPlay ? 'caret-right' : 'pause'" @click="controlPlay"/></a-col>
-          <a-col :span="8"><a-icon type="step-forward" /></a-col>
+          <a-col :span="8"><a-icon type="step-forward" @click="changeSong('forward')"/></a-col>
+          <svg-icon :name="isSingleLoop ? 'danquxunhuan' : 'liebiaoxunhuan'" width="40" height="40" class="loopbtn" @click="isSingleLoop = !isSingleLoop"></svg-icon>
         </a-row>
       </div>
     </div>
@@ -50,22 +51,42 @@ export default {
         0: '0',
         100: ''
       },
-      isPlay: false
+      isPlay: false,
+      isSingleLoop: true
     };
   },
   created() {
-    this.getSongUrl();
-    this.getSongDetail()
+    this.getSongInfo();
   },
   computed: {
-    ...mapState(['songListId', 'songId'])
+    ...mapState(['songListId', 'songId', 'playList'])
+  },
+  watch: {
+    'songInfo.picUrl'() {
+      this.isPlay = true
+      
+    },
+    isPlay(newStatus) {
+      if (newStatus) {
+        this.$refs.audioRef.play()
+      } else {
+        this.$refs.audioRef.pause()
+      }
+    }
   },
   methods: {
-    async getSongUrl() {
-      const { data: res } = await this.$http.get('/song/url', { params: { id: this.songInfo.id} });
-      console.log(res);
-      if (res.code !== 200) return
-      this.songInfo.src = res.data[0].url
+    getSongInfo() {
+      // const { data: res } = await this.$http.get('/song/url', { params: { id: this.songInfo.id} });
+      // 首先获得歌曲的音源url，获取到之后，在获取其他信息
+      this.$http.get('/song/url', { params: { id: this.songInfo.id} }).then(({data: res}) => {
+        if (res.code !== 200) return
+        this.songInfo.src = res.data[0].url
+      }).then(() => {
+        this.$http.get('/song/detail', { params: { ids: this.songInfo.id} }).then(({data: res}) => {
+          this.songInfo.picUrl = res.songs[0].al.picUrl
+          this.songInfo.name = res.songs[0].name
+        })
+      })
     },
     async getSongDetail() {
       const { data: res } = await this.$http.get('/song/detail', { params: { ids: this.songInfo.id} });
@@ -75,7 +96,6 @@ export default {
     },
     initAudio() {
       this.marks['100'] = this.formatSeconds(this.$refs.audioRef.duration)
-      this.isPlay = true
     },
     autoChanged() {
       this.percent = this.$refs.audioRef.currentTime * 100 / this.$refs.audioRef.duration
@@ -83,12 +103,42 @@ export default {
     progressChanged(precent) {
       this.$refs.audioRef.currentTime = this.$refs.audioRef.duration * precent / 100
     },
-    controlPlay() {
-      if (this.isPlay) {
-        this.$refs.audioRef.pause()
+    controlOrder(direction) {
+      this.direction = direction
+    },
+    // 歌曲播放结束时
+    songEnd() {
+      if (this.isSingleLoop) {
+        this.$refs.audioRef.load()
+        this.isPlay = true
       } else {
-        this.$refs.audioRef.play()
+        this.changeSong('forward')
       }
+    },
+    // 切歌
+    async changeSong(flag) {
+      let index = this.playList.findIndex(item => item == this.songInfo.id)
+      if (flag == 'forward') {
+        if (index == -1 || index == this.playList.length-1) {
+          index = 0
+        } else {
+          index += 1
+        }
+      } else {
+        if (index == -1 || index == 0) {
+          index = this.playList.length-1
+        } else {
+          index -= 1
+        }
+      }
+      this.isPlay = false
+      this.songInfo.id = this.playList[index]
+      this.$store.commit('setSongId', this.songInfo.id)
+      this.getSongInfo()
+      this.initAudio()
+    },
+    controlPlay() {
+      this.isPlay = !this.isPlay
     },
     formatter(precent) {
       return this.formatSeconds(precent / 100 * this.$refs.audioRef.duration)
@@ -154,6 +204,11 @@ export default {
     .ant-col {
       text-align: center;
       font-size: 40px;
+    }
+
+    .loopbtn {
+      position: absolute;
+      top: 10px;
     }
   }
 }

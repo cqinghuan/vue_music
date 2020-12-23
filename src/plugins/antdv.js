@@ -14,7 +14,8 @@ PageHeader,
 Descriptions,
 List,
 Progress,
-Slider
+Slider,
+Affix
 } from 'ant-design-vue'
 
 Vue.use(FormModel)
@@ -32,3 +33,4 @@ Vue.use(Descriptions)
 Vue.use(List)
 Vue.use(Progress)
 Vue.use(Slider)
+Vue.use(Affix)
